@@ -6,6 +6,7 @@ local models = { -- Allowed vehicle models
     "raiden"
 }
 
+local trigger = 246 -- Key to activate autopilot
 local abort = {32, 34, 8, 9, 73} -- Keys to abort Autopilot
 
 local active = false
@@ -71,7 +72,7 @@ Citizen.CreateThread(function()
                     active = false
                 end
             end
-        elseif IsControlJustPressed(0, 246) then
+        elseif IsControlJustPressed(0, trigger) then
             player = GetPlayerPed(-1)
             vehicle = GetVehiclePedIsIn(player)
             local model = GetEntityModel(vehicle)
