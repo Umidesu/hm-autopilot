@@ -10,7 +10,7 @@ local trigger = 246 -- Key to activate autopilot
 local abort = {32, 34, 8, 9, 73} -- Keys to abort Autopilot
 
 local active = false
-local blip
+local coords
 local player
 local vehicle
 
@@ -30,10 +30,10 @@ function valid(model)
 end
 
 function start()
-    blip = GetFirstBlipInfoId(8)
+    local blip = GetFirstBlipInfoId(8)
     if blip ~= nil and blip ~= 0 then
-        local coord = GetBlipCoords(blip)
-        TaskVehicleDriveToCoordLongrange(player, vehicle, coord.x, coord.y, coord.z, speed, flag, stop)
+        coords = GetBlipCoords(blip)
+        TaskVehicleDriveToCoordLongrange(player, vehicle, coords.x, coords.y, coords.z, speed, flag, stop)
         active = true
     else
         notify("Hedef bulunamadi")
@@ -41,24 +41,26 @@ function start()
 end
 
 Citizen.CreateThread(function()
-    while active do
-        Citizen.Wait(200)
-        local coords = GetEntityCoords(GetPlayerPed(-1))
-        local Distance = Vdist(coord.x, coords.y, coords.z, blip.x, blip.y, coords.z)
-        if distance <= 10 then
-            ClearPedTasks(player)
-            SetVehicleForwardSpeed(vehicle, 19.0)
-            Citizen.Wait(200)
-            SetVehicleForwardSpeed(vehicle, 15.0)
-            Citizen.Wait(200)
-            SetVehicleForwardSpeed(vehicle, 11.0)
-            Citizen.Wait(200)
-            SetVehicleForwardSpeed(vehicle, 6.0)
-            Citizen.Wait(200)
-            SetVehicleForwardSpeed(vehicle, 0.0)
-            notify("Hedefe ulasildi")
-            active = false
+    while true do
+        if active then
+            local coord = GetEntityCoords(GetPlayerPed(-1))
+            local distance = Vdist(coord.x, coord.y, coord.z, coords.x, coords.y, coord.z)
+            if distance <= 10 then
+                ClearPedTasks(player)
+                SetVehicleForwardSpeed(vehicle, 19.0)
+                Citizen.Wait(200)
+                SetVehicleForwardSpeed(vehicle, 15.0)
+                Citizen.Wait(200)
+                SetVehicleForwardSpeed(vehicle, 11.0)
+                Citizen.Wait(200)
+                SetVehicleForwardSpeed(vehicle, 6.0)
+                Citizen.Wait(200)
+                SetVehicleForwardSpeed(vehicle, 0.0)
+                notify("Hedefe ulasildi")
+                active = false
+            end
         end
+        Citizen.Wait(200)
     end
 end)
 
