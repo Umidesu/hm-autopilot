@@ -6,8 +6,10 @@ local models = { -- Allowed vehicle models
     "raiden"
 }
 
-local trigger = 246 -- Key to activate autopilot
+local trigger = "Y" -- Key to activate autopilot
 local abort = {32, 34, 8, 9, 73} -- Keys to abort Autopilot
+
+local command = "+hm-autopilot:start" -- Command to trigger from chat
 
 local active = false
 local coords
@@ -29,16 +31,23 @@ function valid(model)
     return false
 end
 
-function start()
-    local blip = GetFirstBlipInfoId(8)
-    if blip ~= nil and blip ~= 0 then
-        coords = GetBlipCoords(blip)
-        TaskVehicleDriveToCoordLongrange(player, vehicle, coords.x, coords.y, coords.z, speed, flag, stop)
-        active = true
-    else
-        notify("Hedef bulunamadi")
+RegisterCommand("+hm-autopilot:start", function()
+    player = GetPlayerPed(-1)
+    vehicle = GetVehiclePedIsIn(player)
+    local model = GetEntityModel(vehicle)
+    if valid(GetDisplayNameFromVehicleModel(model)) then
+        local blip = GetFirstBlipInfoId(8)
+        if blip ~= nil and blip ~= 0 then
+            coords = GetBlipCoords(blip)
+            TaskVehicleDriveToCoordLongrange(player, vehicle, coords.x, coords.y, coords.z, speed, flag, stop)
+            active = true
+        else
+            notify("Hedef bulunamadi")
+        end
     end
-end
+end, false)
+
+RegisterKeyMapping(command, "Start Autopilot", "keyboard", trigger)
 
 Citizen.CreateThread(function()
     while true do
@@ -66,22 +75,14 @@ end)
 
 Citizen.CreateThread(function()
     while true do
-        Citizen.Wait(0)
         if active then
             for k, v in ipairs(abort) do
-                if IsControlJustPressed(0, v) or isDead then
+                if IsControlJustPressed(0, v)then
                     ClearPedTasks(player)
                     active = false
                 end
             end
-        elseif IsControlJustPressed(0, trigger) then
-            player = GetPlayerPed(-1)
-            vehicle = GetVehiclePedIsIn(player)
-            local model = GetEntityModel(vehicle)
-            if valid(GetDisplayNameFromVehicleModel(model)) then
-                start()
-            end
-            Citizen.Wait(1000)
         end
+        Citizen.Wait(1)
     end
 end)

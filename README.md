@@ -5,16 +5,18 @@ Better autopilot for FiveM
 client.lua
 
 ```
-local speed = 20.0                  -- Max speed for Autopilot
-local flag = 447                    -- Ai rules for Autopilot
-local stop = 2.0                    -- Distance for vehicle to stop at destination
+local speed = 20.0                      -- Max speed for Autopilot
+local flag = 447                        -- Ai rules for Autopilot
+local stop = 2.0                        -- Distance for vehicle to stop at destination
 
-local models = {                    -- Allowed vehicle models
+local models = {                        -- Allowed vehicle models
     "raiden"
 }
 
-local trigger = 246                 -- Key to activate autopilot
-local abort = {32, 34, 8, 9, 73}    -- Keys to abort Autopilot
+local trigger = "Y"                     -- Key to activate autopilot
+local abort = {32, 34, 8, 9, 73}        -- Keys to abort Autopilot
+
+local command = "+hm-autopilot:start"   -- Command to trigger from chat
 ```
 
 # FLAG
